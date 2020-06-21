@@ -27,6 +27,8 @@ int main()
     string pluginName = "blur";
     cout << "Create plugin " << pluginName << endl;
     CV_wrapper blur("blur");
+    CV_wrapper dilate("dilate");
+    CV_wrapper erode("erode");
 
 //    CV_wrapper erode("erode");
 //    CV_wrapper dilate("dilate");
@@ -39,10 +41,26 @@ int main()
     Mat img = cv::imread(fullImageName);
     if(! img.empty() )
     {
+        string proceedImageName;
+
         blur.processAsync(img);
         blur.waitForResult(img);
 
-        string proceedImageName = imagePath + "blurred_" + imageName;
+        proceedImageName = imagePath + "blurred_" + imageName;
+        cout << "Save image " << proceedImageName << endl;
+        cv::imwrite(proceedImageName, img);
+
+        erode.processAsync(img);
+        erode.waitForResult(img);
+
+        proceedImageName = imagePath + "eroded_" + imageName;
+        cout << "Save image " << proceedImageName << endl;
+        cv::imwrite(proceedImageName, img);
+
+        dilate.processAsync(img);
+        dilate.waitForResult(img);
+
+        proceedImageName = imagePath + "dilated_" + imageName;
         cout << "Save image " << proceedImageName << endl;
         cv::imwrite(proceedImageName, img);
     }

@@ -19,10 +19,11 @@ CV_wrapper::CV_wrapper(const string& pluginName)
             throw("Can't load library!");
         }
 
-        create_fcn_ = (CV_plugin * (*)(const string& paramFile))dlsym(handle_, "create");
+        create_fcn_ = (fCV_plugin)dlsym(handle_, "create");
 
         string paramsFile = CONFIG_PATH + pluginName + ".yml";
-        cv_plugin_ = create_fcn_(paramsFile);
+
+        cv_plugin_ = dynamic_cast<pCV_plugin>(create_fcn_(paramsFile));
         if(cv_plugin_ == NULL)
         {
             throw("Can't create plugin!");

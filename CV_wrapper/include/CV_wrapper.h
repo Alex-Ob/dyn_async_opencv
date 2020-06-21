@@ -18,6 +18,9 @@ using cv::Mat;
 
 class CV_plugin;
 
+typedef CV_plugin* pCV_plugin;
+typedef pCV_plugin (*fCV_plugin)(const string& paramFile);
+
 class CV_wrapper
 {
 public:
@@ -33,7 +36,7 @@ public:
     
 protected:
 
-    CV_plugin *cv_plugin_ = nullptr;
+    pCV_plugin cv_plugin_ = nullptr;
     
 private:
     
@@ -42,7 +45,8 @@ private:
     bool isInited_ = false;
     void *handle_   = nullptr;
 
-    CV_plugin * (*create_fcn_)(const string& paramFile) = nullptr;
+    //pCV_plugin (*create_fcn_)(const string& paramFile) = nullptr;
+    fCV_plugin create_fcn_ = nullptr;
 };
 
 

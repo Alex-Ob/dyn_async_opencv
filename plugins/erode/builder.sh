@@ -1,8 +1,8 @@
 #!/bin/bash
 # Building script
 
-ProjectName=[name]
-ProjectType=[shared]
+ProjectName=erode
+ProjectType=so
 
 #if [[ $ProjectName == [* ]]; then
 if [[ ${ProjectName:0:1} == '[' ]]; then

@@ -9,7 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 find_package(OpenCV REQUIRED core imgproc highgui)
 
-set(SRC_LIST ${PROJECT_SOURCE_DIR}/src/test.cpp ${PROJECT_SOURCE_DIR}/src/CV_wrapper.cpp)
+set(SRC_LIST ${PROJECT_SOURCE_DIR}/src/test.cpp ${PROJECT_SOURCE_DIR}/src/CV_wrapper.cpp ${PROJECT_SOURCE_DIR}/src/cv_plugin.cpp)
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})

@@ -4,13 +4,13 @@
 
 CV_plugin *create(const std::string &config_name)
 {
- return new [Name](config_name);
+    return new [Name](config_name);
 }
 
 
 [Name]::[Name](const string& ymlFile) : CV_plugin(ymlFile)
 {
-   init(ymlFile);
+    init(ymlFile);
 }
 
 [Name]::~[Name]()
@@ -18,54 +18,27 @@ CV_plugin *create(const std::string &config_name)
 
 }
 
-bool [Name]::init(const string& config_name)
-{
-    bool res = false;
-
-    try
-    {
-        if(fileExists(config_name))
-        {
-            cv::String fstr(config_name.c_str());
-            cv::FileStorage fs(fstr, cv::FileStorage::READ | cv::FileStorage::FORMAT_YAML);
-
-            loadParameters(fs);
-
-            res = true;
-        }
-    }
-    catch(const cv::Exception& ex)
-    {
-        std::cout << ex.what() << std::endl;
-    }
-    return res;
-}
-
 
 void [Name]::loadParameters(const cv::FileStorage& fs)
 {
+    // Any plugin's data
     sigma_ = static_cast<double>(fs["sigma"]);
 }
 
-bool [Name]::processAsync(Mat &Img)
+int [Name]::processAsync(Mat &Img)
 {
-
     inProcess_ = true;
+    // исходная картинка может в дальнейшем модифицироваться
     inImg_ = Img.clone();
+
+    // Поиск уникального id
+    do { ++thread_counter_; }
+    while(thread_map_.find(thread_counter_) != thread_map_.end());
+
+    thread_map_[thread_counter_].img_ = Mat();
 /// This function must be overwritten!
-    thread_ = std::thread([this]() { cv::GaussianBlur(inImg_, outImg_, cv::Size(0,0), sigma_); inProcess_ = false; });
+    thread_map_[thread_counter_].thread_ = std::thread([this]() { cv::GaussianBlur(inImg_, thread_map_[thread_counter_].img_, cv::Size(0,0), sigma_); inProcess_ = false; });
 
-    return true;
-}
-
-bool [Name]::waitForResult(Mat& img)
-{
-    if(thread_.joinable())
-    {
-        thread_.join();
-    }
-    img = outImg_.clone();
-
-    return true;
+    return thread_counter_;
 }
 

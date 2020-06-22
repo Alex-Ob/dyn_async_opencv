@@ -14,25 +14,18 @@ bool fileExists(const string& filename)
 CV_plugin::CV_plugin(const string &config_name):
 inProcess_(false)
 {
-    //init(config_name);
+    //init(config_name); //Вызывается в производных классах
 }
 
 CV_plugin::~CV_plugin()
 {
-    if(thread_.joinable() && inProcess_)
+    for(std::map<int, Thread_Data>::iterator it = thread_map_.begin(); it != thread_map_.end(); ++it)
     {
-        thread_.join();
+        if(it->second.thread_.joinable())
+            it->second.thread_.join();
     }
 }
 
-bool CV_plugin::init(const string& config_name)
-{
-    string Err = "Function " + string(__FUNCTION__) + " must be override!";
-    throw(Err);
-
-    return false;
-}
-/*
 bool CV_plugin::init(const string& config_name)
 {
     bool res = false;
@@ -43,9 +36,9 @@ bool CV_plugin::init(const string& config_name)
         {
             cv::String fstr(config_name.c_str());
             cv::FileStorage fs(fstr, cv::FileStorage::READ | cv::FileStorage::FORMAT_YAML);
-            //cv::FileNode plugins = fs["plugins"];
 
-            loadParameters(fs);
+            // Вызов виртуальной функции производного класса
+            this->loadParameters(fs);
 
             res = true;
         }
@@ -55,23 +48,35 @@ bool CV_plugin::init(const string& config_name)
         std::cout << ex.what() << std::endl;
     }
     return res;
-}
-*/
 
-bool CV_plugin::processAsync(Mat &Img)
+}
+
+int CV_plugin::processAsync(Mat &Img)
 {
     string Err = "Function " + string(__FUNCTION__) + " must be override!";
     throw(Err);
 
-   return false;
+    return -1;
 }
 
 
-bool CV_plugin::waitForResult(Mat& Img)
+bool CV_plugin::waitForResult(int thread_id, Mat& img)
 {
-    string Err = "Function " + string(__FUNCTION__) + " must be override!";
-    throw(Err);
-    return false;
+    bool res = false;
+
+    if(thread_map_.find(thread_id) != thread_map_.end())
+    {
+        if(thread_map_[thread_id].thread_.joinable())
+        {
+            thread_map_[thread_id].thread_.join();
+        }
+        //img = thread_map_[thread_id].img_.clone();
+        thread_map_[thread_id].img_.copyTo(img);
+        thread_map_.erase(thread_id);
+
+        res = true;
+    }
+    return res;
 }
 
 void CV_plugin::loadParameters(const cv::FileStorage& fs)

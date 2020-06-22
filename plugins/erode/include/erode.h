@@ -24,9 +24,7 @@ class Erode: public CV_plugin
 public:
     Erode(const string& ymlFile);
    ~Erode();
-    bool init(const string& config_name);
-    bool processAsync(Mat &Img);
-    bool waitForResult(Mat&);
+    int processAsync(Mat &Img);
 
 protected:
 

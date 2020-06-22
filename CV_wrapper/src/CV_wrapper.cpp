@@ -11,7 +11,6 @@ CV_wrapper::CV_wrapper(const string& pluginName)
         assert( ! pluginName.empty() );
 
         string pluginFile = "lib" + pluginName + ".so";
-        //bool fex = fileExists(pluginFile);
         handle_ = dlopen(pluginFile.c_str(), RTLD_LAZY);
         if(handle_ == NULL)
         {
@@ -56,16 +55,13 @@ void CV_wrapper::setParameters(const string& ymlFile)
 
 int CV_wrapper::processAsync(Mat& img)
 {
-    if(cv_plugin_ != NULL)
-    {
-        cv_plugin_->processAsync(img);
-    }
-
-    return 0;
+    return (cv_plugin_ != NULL) ?
+            cv_plugin_->processAsync(img) : 0;
 }
 
 
-bool CV_wrapper::waitForResult(Mat& img)
+bool CV_wrapper::waitForResult(int thread_id, Mat& img)
 {
-    return cv_plugin_->waitForResult(img);
+    return (cv_plugin_ != NULL) ?
+            cv_plugin_->waitForResult(thread_id, img) : 0;
 }

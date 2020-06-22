@@ -4,14 +4,21 @@
 #include <string>
 #include <iostream>
 #include <thread>
+#include <map>
 #include <sys/stat.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-
 using std::string;
 using cv::Mat;
+
+typedef struct
+{
+    std::thread thread_;
+    Mat img_;
+
+} Thread_Data;
 
 bool fileExists(const string& filename);
 
@@ -25,19 +32,22 @@ public:
 
     virtual ~CV_plugin();
 
-    virtual bool init(const string& config_name);
+    bool init(const string& config_name);
     
-    virtual bool processAsync(Mat&);
+    // @return: thread_id which must be used for thread control;
+    virtual int processAsync(Mat&);
     
-    virtual bool waitForResult(Mat&);
-
+    bool waitForResult(int, Mat&);
 
 protected:
     
     virtual void loadParameters(const cv::FileStorage&);
 
-    std::thread thread_;
+    int thread_counter_ = 0;
+    std::map<int, Thread_Data> thread_map_;
+
     std::string name_;
+
     volatile bool inProcess_ = false;
 
     cv::Mat inImg_, outImg_;

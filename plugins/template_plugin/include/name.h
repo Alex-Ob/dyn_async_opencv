@@ -24,9 +24,7 @@ class [Name]: public CV_plugin
 public:
     [Name](const string& ymlFile);
    ~[Name]();
-    bool init(const string& config_name);
-    bool processAsync(Mat &Img);
-    bool waitForResult(Mat&);
+    int processAsync(Mat &Img);
 
 protected:
 

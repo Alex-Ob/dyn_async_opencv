@@ -16,9 +16,7 @@ class Blur : public CV_plugin
 public:
     Blur(const string& ymlFile);
    ~Blur();
-    bool init(const string& config_name);
-    bool processAsync(Mat &Img);
-    bool waitForResult(Mat&);
+    int processAsync(Mat &Img);
 
 protected:
 

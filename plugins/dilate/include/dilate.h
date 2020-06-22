@@ -24,9 +24,7 @@ class Dilate: public CV_plugin
 public:
     Dilate(const string& ymlFile);
    ~Dilate();
-    bool init(const string& config_name);
-    bool processAsync(Mat &Img);
-    bool waitForResult(Mat&);
+    int processAsync(Mat &Img);
 
 protected:
 

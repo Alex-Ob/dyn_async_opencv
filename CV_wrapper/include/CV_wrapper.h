@@ -32,7 +32,7 @@ public:
 
     int  processAsync(Mat& img);
 
-    bool waitForResult(Mat& img);
+    bool waitForResult(int, Mat& img);
     
 protected:
 
